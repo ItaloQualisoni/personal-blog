@@ -1,5 +1,5 @@
 ---
-layout: _includes/layouts/post.njk
+layout: layouts/post.njk
 title: this is a demo post
 description: this is a demo post
 date: 2021-01-06T03:00:00.000Z
