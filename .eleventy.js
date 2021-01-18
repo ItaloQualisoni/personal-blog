@@ -13,7 +13,9 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.setDataDeepMerge(true);
 
-  eleventyConfig.addLayoutAlias("post", "layouts/post.njk");
+  eleventyConfig.addLayoutAlias("post", "post.njk");
+  eleventyConfig.addLayoutAlias("home", "home.njk");
+  eleventyConfig.addLayoutAlias("base", "base.njk");
 
   eleventyConfig.addFilter("readableDate", dateObj => {
     return DateTime.fromJSDate(dateObj, {zone: 'utc'}).toFormat("dd LLL yyyy");
@@ -65,9 +67,9 @@ module.exports = function(eleventyConfig) {
     // returning an array in addCollection works in Eleventy 0.5.3
     return [...tagSet];
   });
-  eleventyConfig.addPassthroughCopy('admin')
-  eleventyConfig.addPassthroughCopy("img");
-  eleventyConfig.addPassthroughCopy("css");
+  eleventyConfig.addPassthroughCopy('./_site/admin')
+  eleventyConfig.addPassthroughCopy('./_site/images');
+  eleventyConfig.addPassthroughCopy('./_site/css');
 
   /* Markdown Overrides */
   let markdownLibrary = markdownIt({
@@ -85,7 +87,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.setBrowserSyncConfig({
     callbacks: {
       ready: function(err, browserSync) {
-        const content_404 = fs.readFileSync('_site/404.html');
+        const content_404 = fs.readFileSync('dist/404.md');
 
         browserSync.addMiddleware("*", (req, res) => {
           // Provides the 404 content without redirect.
@@ -122,10 +124,11 @@ module.exports = function(eleventyConfig) {
 
     // These are all optional, defaults are shown:
     dir: {
-      input: ".",
+      input: "_site",
       includes: "_includes",
+      layouts: '_layouts',
       data: "_data",
-      output: "_site"
+      output: "dist"
     }
   };
 };
