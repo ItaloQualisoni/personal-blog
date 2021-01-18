@@ -1,0 +1,10 @@
+<ul class="nav">
+    {%- for entry in collections.all | eleventyNavigation %}
+        <li class="nav-item{% if entry.url == page.url %} nav-item-active{% endif %}"><a href="{{ entry.url | url }}">{{ entry.title }}</a></li>
+    {%- endfor %}
+    {%- for socialNav in social -%}
+      <a class="nav-item dropdown-item text-capitalize" target="_blank" href="{{socialNav.url}}">
+        <i class="{{socialNav.iconClass}} text-secondary mr-2"></i>{{socialNav.name}}
+      </a>
+    {%- endfor -%}
+</ul>
