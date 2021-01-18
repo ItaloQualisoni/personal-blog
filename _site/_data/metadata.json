@@ -1,9 +1,9 @@
 {
   "title": "qualisoni-dev",
   "url": "https://qualisoni-dev.netlify.app/",
-  "description": "I am writing about my experiences as a naval navel-gazer.",
+  "description": "Eu estou aprendendo como escrever um blog.",
   "feed": {
-    "subtitle": "I am writing about my experiences as a naval navel-gazer.",
+    "subtitle": "I am learning how to develop a blog",
     "filename": "feed.xml",
     "path": "/feed/feed.xml",
     "id": "https://qualisoni-dev.netlify.app/"

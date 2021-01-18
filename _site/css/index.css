@@ -224,3 +224,7 @@ a[href].direct-link:focus:visited,
 :hover > a[href].direct-link:visited {
   color: #aaa;
 }
+
+.nav-social-icon {
+  font-size: 1.3em;
+}
