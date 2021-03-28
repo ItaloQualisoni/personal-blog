@@ -10,7 +10,7 @@ siteTitle: Qualisoni Blog
     <title>{{siteTitle}}--{{ title or metadata.title }}</title>
     <meta name="description" content="{{ description or metadata.description }}">
     <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js" integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP" crossorigin="anonymous"></script>
-    
+    <link rel="stylesheet" href="{{ '/css/main.css' | url }}">
     <link media="print" onload="this.media='all'" rel="stylesheet" href="{{ '/css/index.css' | url }}">
     <link media="print" onload="this.media='all'" rel="stylesheet" href="{{ '/css/prism-base16-monokai.dark.css' | url }}">
     <link rel="alternate" href="{{ metadata.feed.path | url }}" type="application/atom+xml" title="{{ metadata.title }}">
@@ -18,12 +18,12 @@ siteTitle: Qualisoni Blog
   </head>
   <body>
     <header>
-      <h1 class="home"><a href="{{ '/' | url }}">{{ metadata.title }}</a></h1>
+      
       {#- Read more about `eleventy-navigation` at https://www.11ty.dev/docs/plugins/navigation/ #}
       {% include "navigation.njk" %}
     </header>
 
-    <main{% if templateClass %} class="{{ templateClass }}"{% endif %}>
+    <main {% if templateClass %} class="{{ templateClass }}"{% endif %}>
       {{ content | safe }}
     </main>
 

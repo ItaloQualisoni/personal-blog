@@ -5,11 +5,17 @@ const pluginSyntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 const pluginNavigation = require("@11ty/eleventy-navigation");
 const markdownIt = require("markdown-it");
 const markdownItAnchor = require("markdown-it-anchor");
+const pluginTailwind = require('eleventy-plugin-tailwindcss');
+
 
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPlugin(pluginRss);
   eleventyConfig.addPlugin(pluginSyntaxHighlight);
   eleventyConfig.addPlugin(pluginNavigation);
+  
+  eleventyConfig.addPlugin(pluginTailwind, {
+    src: '_site/css/*'
+  });
 
   eleventyConfig.setDataDeepMerge(true);
 
@@ -69,7 +75,7 @@ module.exports = function(eleventyConfig) {
   });
   eleventyConfig.addPassthroughCopy('./_site/admin')
   eleventyConfig.addPassthroughCopy('./_site/images');
-  eleventyConfig.addPassthroughCopy('./_site/css');
+  //eleventyConfig.addPassthroughCopy('./_site/css');
 
   /* Markdown Overrides */
   let markdownLibrary = markdownIt({
