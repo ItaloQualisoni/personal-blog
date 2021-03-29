@@ -1,0 +1,20 @@
+[
+    {
+        "label": "About",
+        "url": "/about"
+    },
+    {
+        "label": "Tag List",
+        "url": "/tags"
+    },
+    {
+        "label": "GitHub",
+        "url": "https://github.com/ItaloQualisoni/personal-blog/",
+        "newTab": true
+    },
+    {
+        "label": "Linkedin",
+        "url": "https://br.linkedin.com/in/italoqualisoni",
+        "newTab": true
+    }
+]

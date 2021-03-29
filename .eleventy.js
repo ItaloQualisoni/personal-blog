@@ -1,140 +1,57 @@
-const { DateTime } = require("luxon");
-const fs = require("fs");
-const pluginRss = require("@11ty/eleventy-plugin-rss");
-const pluginSyntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
-const pluginNavigation = require("@11ty/eleventy-navigation");
-const markdownIt = require("markdown-it");
-const markdownItAnchor = require("markdown-it-anchor");
 const pluginTailwind = require('eleventy-plugin-tailwindcss');
 
+const fs = require("fs");
 
-module.exports = function(eleventyConfig) {
-  eleventyConfig.addPlugin(pluginRss);
-  eleventyConfig.addPlugin(pluginSyntaxHighlight);
-  eleventyConfig.addPlugin(pluginNavigation);
+module.exports = (config) => {
   
-  eleventyConfig.addPlugin(pluginTailwind, {
-    src: '_site/css/*'
+  config.addPlugin(pluginTailwind, {
+    _site: '_site/assets/css/*'
   });
 
-  eleventyConfig.setDataDeepMerge(true);
+  config.setDataDeepMerge(true);
 
-  eleventyConfig.addLayoutAlias("post", "post.njk");
-  eleventyConfig.addLayoutAlias("home", "home.njk");
-  eleventyConfig.addLayoutAlias("base", "base.njk");
+  config.addPassthroughCopy('_site/assets/img/**/*');
+  config.addPassthroughCopy({ '_site/posts/img/**/*': 'assets/img/' });
+  config.addPassthroughCopy({ '_site/admin/*': 'admin/' });
 
-  eleventyConfig.addFilter("readableDate", dateObj => {
-    return DateTime.fromJSDate(dateObj, {zone: 'utc'}).toFormat("dd LLL yyyy");
-  });
+  config.addWatchTarget("_site/assets/js/");
 
-  // https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#valid-date-string
-  eleventyConfig.addFilter('htmlDateString', (dateObj) => {
-    return DateTime.fromJSDate(dateObj, {zone: 'utc'}).toFormat('yyyy-LL-dd');
-  });
+  config.addLayoutAlias('default', 'layouts/default.njk');
+  config.addLayoutAlias('post', 'layouts/post.njk');
 
-  // Get the first `n` elements of a collection.
-  eleventyConfig.addFilter("head", (array, n) => {
-    if( n < 0 ) {
-      return array.slice(n);
-    }
+  config.addFilter('readableDate', require('./lib/filters/readableDate'));
+  config.addFilter('minifyJs', require('./lib/filters/minifyJs'));
 
-    return array.slice(0, n);
-  });
+  config.addTransform('minifyHtml', require('./lib/transforms/minifyHtml'));
 
-  eleventyConfig.addFilter("min", (...numbers) => {
-    return Math.min.apply(null, numbers);
-  });
+  config.addCollection('posts', require('./lib/collections/posts'));
+  config.addCollection('tagList', require('./lib/collections/tagList'));
+  config.addCollection('pagedPosts', require('./lib/collections/pagedPosts'));
+  config.addCollection('pagedPostsByTag', require('./lib/collections/pagedPostsByTag'));
 
-  eleventyConfig.addCollection("tagList", function(collection) {
-    let tagSet = new Set();
-    collection.getAll().forEach(function(item) {
-      if( "tags" in item.data ) {
-        let tags = item.data.tags;
-
-        tags = tags.filter(function(item) {
-          switch(item) {
-            // this list should match the `filter` list in tags.njk
-            case "all":
-            case "nav":
-            case "post":
-            case "posts":
-              return false;
-          }
-
-          return true;
-        });
-
-        for (const tag of tags) {
-          tagSet.add(tag);
-        }
-      }
-    });
-
-    // returning an array in addCollection works in Eleventy 0.5.3
-    return [...tagSet];
-  });
-  eleventyConfig.addPassthroughCopy('./_site/admin')
-  eleventyConfig.addPassthroughCopy('./_site/images');
-  //eleventyConfig.addPassthroughCopy('./_site/css');
-
-  /* Markdown Overrides */
-  let markdownLibrary = markdownIt({
-    html: true,
-    breaks: true,
-    linkify: true
-  }).use(markdownItAnchor, {
-    permalink: true,
-    permalinkClass: "direct-link",
-    permalinkSymbol: "#"
-  });
-  eleventyConfig.setLibrary("md", markdownLibrary);
-
-  // Browsersync Overrides
-  eleventyConfig.setBrowserSyncConfig({
+  config.setBrowserSyncConfig({
     callbacks: {
-      ready: function(err, browserSync) {
-        const content_404 = fs.readFileSync('dist/404.md');
+      ready: function(err, bs) {
 
-        browserSync.addMiddleware("*", (req, res) => {
+        bs.addMiddleware("*", (req, res) => {
+          const content_404 = fs.readFileSync('dist/404.html');
+          // Add 404 http status code in request header.
+          res.writeHead(404, { "Content-Type": "text/html; charset=UTF-8" });
           // Provides the 404 content without redirect.
           res.write(content_404);
           res.end();
         });
-      },
-    },
-    ui: false,
-    ghostMode: false
+      }
+    }
   });
 
   return {
-    templateFormats: [
-      "md",
-      "njk",
-      "html",
-      "liquid"
-    ],
-
-    // If your site lives in a different subdirectory, change this.
-    // Leading or trailing slashes are all normalized away, so don’t worry about those.
-
-    // If you don’t have a subdirectory, use "" or "/" (they do the same thing)
-    // This is only used for link URLs (it does not affect your file structure)
-    // Best paired with the `url` filter: https://www.11ty.dev/docs/filters/url/
-
-    // You can also pass this in on the command line using `--pathprefix`
-    // pathPrefix: "/",
-
-    markdownTemplateEngine: "liquid",
-    htmlTemplateEngine: "njk",
-    dataTemplateEngine: "njk",
-
-    // These are all optional, defaults are shown:
     dir: {
-      input: "_site",
-      includes: "_includes",
-      layouts: '_layouts',
-      data: "_data",
-      output: "dist"
-    }
+      input: '_site',
+      output: 'dist'
+    },
+    templateFormats: ['md', 'njk', 'html'],
+    dataTemplateEngine: 'njk',
+    markdownTemplateEngine: 'njk'
   };
 };
