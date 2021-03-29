@@ -1,8 +1,12 @@
 const pluginTailwind = require('eleventy-plugin-tailwindcss');
+const pluginRss = require("@11ty/eleventy-plugin-rss");
+const pluginSyntaxHighlight = require("@11ty/eleventy-plugin-syntaxhighlight");
 
 const fs = require("fs");
 
 module.exports = (config) => {
+  config.addPlugin(pluginRss);
+  config.addPlugin(pluginSyntaxHighlight);
   
   config.addPlugin(pluginTailwind, {
     _site: '_site/assets/css/*'
